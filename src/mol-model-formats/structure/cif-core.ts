@@ -53,6 +53,7 @@ async function getModels(db: CifCore_Database, format: CifCoreFormat, ctx: Runti
     const MOL = Column.ofConst('MOL', atomCount, Column.Schema.str);
     const A = Column.ofConst('A', atomCount, Column.Schema.str);
     const seq_id = Column.ofConst(1, atomCount, Column.Schema.int);
+    const auth_seq_id = Column.ofConst('1', atomCount, Column.Schema.str);
 
     const symmetry = getSymmetry(db);
     const m = symmetry.spacegroup.cell.fromFractional;
@@ -110,7 +111,7 @@ async function getModels(db: CifCore_Database, format: CifCoreFormat, ctx: Runti
         auth_asym_id: A,
         auth_atom_id: label,
         auth_comp_id: MOL,
-        auth_seq_id: seq_id,
+        auth_seq_id: auth_seq_id,
         Cartn_x: Column.ofFloatArray(x),
         Cartn_y: Column.ofFloatArray(y),
         Cartn_z: Column.ofFloatArray(z),

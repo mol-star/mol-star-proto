@@ -58,7 +58,7 @@ const atom_site_fields = () => CifWriter.fields<StructureElement.Location, Struc
 
     .str('auth_atom_id', P.atom.auth_atom_id)
     .str('auth_comp_id', P.atom.auth_comp_id)
-    .int('auth_seq_id', P.residue.auth_seq_id, { encoder: E.deltaRLE })
+    .str('auth_seq_id', P.residue.auth_seq_id, { encoder: E.deltaRLE })
     .str('auth_asym_id', atom_site_auth_asym_id)
 
     .int('pdbx_PDB_model_num', P.unit.model_num, { encoder: E.deltaRLE })
@@ -124,7 +124,7 @@ export function residueIdFields<K, D>(getLocation: (key: K, data: D) => Structur
         .str(prepostfixed(prefix, `label_entity_id`), mappedProp(getLocation, P.chain.label_entity_id))
 
         .str(prepostfixed(prefix, `auth_comp_id`), mappedProp(getLocation, P.atom.auth_comp_id))
-        .int(prepostfixed(prefix, `auth_seq_id`), mappedProp(getLocation, P.residue.auth_seq_id), { encoder: E.deltaRLE })
+        .str(prepostfixed(prefix, `auth_seq_id`), mappedProp(getLocation, P.residue.auth_seq_id), { encoder: E.deltaRLE })
         .str(prepostfixed(prefix, `auth_asym_id`), mappedProp(getLocation, P.chain.auth_asym_id));
 
     addModelNum(ret, getLocation, options);
@@ -172,7 +172,7 @@ export function atomIdFields<K, D>(getLocation: (key: K, data: D) => StructureEl
 
         .str(prepostfixed(prefix, `auth_atom_id`), mappedProp(getLocation, P.atom.auth_atom_id))
         .str(prepostfixed(prefix, `auth_comp_id`), mappedProp(getLocation, P.atom.auth_comp_id))
-        .int(prepostfixed(prefix, `auth_seq_id`), mappedProp(getLocation, P.residue.auth_seq_id), { encoder: E.deltaRLE })
+        .str(prepostfixed(prefix, `auth_seq_id`), mappedProp(getLocation, P.residue.auth_seq_id), { encoder: E.deltaRLE })
         .str(prepostfixed(prefix, `auth_asym_id`), mappedProp(getLocation, P.chain.auth_asym_id));
 
     addModelNum(ret, getLocation, options);

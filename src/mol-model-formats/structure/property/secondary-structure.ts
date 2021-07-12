@@ -159,12 +159,12 @@ function addSheets(cat: StructSheetRange, map: SecondaryStructureMap, sheetCount
 }
 
 function assignSecondaryStructureEntry(hierarchy: AtomicHierarchy, entry: SecondaryStructureEntry, resStart: ResidueIndex, resEnd: ResidueIndex, data: SecondaryStructureData) {
-    const { auth_seq_id, pdbx_PDB_ins_code } = hierarchy.residues;
+    const { label_seq_id, pdbx_PDB_ins_code } = hierarchy.residues;
     const { endSeqNumber, endInsCode, key, type } = entry;
 
     let rI = resStart;
     while (rI < resEnd) {
-        const seqNumber = auth_seq_id.value(rI);
+        const seqNumber = label_seq_id.value(rI);
         data.type[rI] = type;
         data.key[rI] = key;
 
@@ -180,7 +180,7 @@ function assignSecondaryStructureEntry(hierarchy: AtomicHierarchy, entry: Second
 function assignSecondaryStructureRanges(hierarchy: AtomicHierarchy, map: SecondaryStructureMap, data: SecondaryStructureData) {
     const { count: chainCount } = hierarchy.chainAtomSegments;
     const { label_asym_id } = hierarchy.chains;
-    const { auth_seq_id, pdbx_PDB_ins_code } = hierarchy.residues;
+    const { label_seq_id, pdbx_PDB_ins_code } = hierarchy.residues;
 
     for (let cI = 0 as ChainIndex; cI < chainCount; cI++) {
         const resStart = AtomicHierarchy.chainStartResidueIndex(hierarchy, cI), resEnd = AtomicHierarchy.chainEndResidueIndexExcl(hierarchy, cI);
@@ -189,7 +189,7 @@ function assignSecondaryStructureRanges(hierarchy: AtomicHierarchy, map: Seconda
             const entries = map.get(asymId)!;
 
             for (let rI = resStart; rI < resEnd; rI++) {
-                const seqNumber = auth_seq_id.value(rI);
+                const seqNumber = label_seq_id.value(rI);
                 if (entries.has(seqNumber)) {
                     const entryList = entries.get(seqNumber)!;
                     for (const entry of entryList) {

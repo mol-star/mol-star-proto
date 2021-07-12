@@ -21,6 +21,7 @@ function getBasic(atoms: PsfFile['atoms']) {
     const asymIds = new Array<string>(atoms.count);
     const seqIds = new Uint32Array(atoms.count);
     const ids = new Uint32Array(atoms.count);
+    const authSeqIds = new Array<string>(atoms.count);
 
     const entityBuilder = new EntityBuilder();
     const componentBuilder = new ComponentBuilder(atoms.residueId, atoms.atomName);
@@ -68,13 +69,14 @@ function getBasic(atoms: PsfFile['atoms']) {
         asymIds[i] = currentAsymId;
         seqIds[i] = currentSeqId;
         ids[i] = i;
+        authSeqIds[i] = residueNumber.toString();
     }
 
     const atom_site = Table.ofPartialColumns(BasicSchema.atom_site, {
         auth_asym_id: atoms.segmentName,
         auth_atom_id: atoms.atomName,
         auth_comp_id: atoms.residueName,
-        auth_seq_id: atoms.residueId,
+        auth_seq_id: Column.ofStringArray(authSeqIds),
         id: Column.ofIntArray(ids),
 
         label_asym_id: Column.ofStringArray(asymIds),

@@ -259,7 +259,7 @@ function _atomicElementLabel(location: StructureElement.Location<Unit.Atomic>, g
                 label.push(`<small>Conformation</small> <b>${alt_id}</b>`);
             }
         case 'residue':
-            const seq_id = label_seq_id === auth_seq_id || !has_label_seq_id ? auth_seq_id : label_seq_id;
+            const seq_id = label_seq_id.toString() === auth_seq_id || !has_label_seq_id ? auth_seq_id : label_seq_id;
             label.push(`<b>${compId} ${seq_id}</b>${seq_id !== auth_seq_id ? ` <small>[auth</small> <b>${auth_seq_id}</b><small>]</small>` : ''}<b>${ins_code ? ins_code : ''}</b>`);
         case 'chain':
             if (label_asym_id === auth_asym_id) {

@@ -27,6 +27,7 @@ function getBasic(atoms: GroAtoms, modelNum: number): BasicData {
     const asymIds = new Array<string>(atoms.count);
     const seqIds = new Uint32Array(atoms.count);
     const ids = new Uint32Array(atoms.count);
+    const authSeqIds = new Array<string>(atoms.count);
 
     const entityBuilder = new EntityBuilder();
     const componentBuilder = new ComponentBuilder(atoms.residueNumber, atoms.atomName);
@@ -66,6 +67,7 @@ function getBasic(atoms: GroAtoms, modelNum: number): BasicData {
         asymIds[i] = currentAsymId;
         seqIds[i] = currentSeqId;
         ids[i] = i;
+        authSeqIds[i] = residueNumber.toString();
     }
 
     const auth_asym_id = Column.ofStringArray(asymIds);
@@ -74,7 +76,7 @@ function getBasic(atoms: GroAtoms, modelNum: number): BasicData {
         auth_asym_id,
         auth_atom_id,
         auth_comp_id,
-        auth_seq_id: atoms.residueNumber,
+        auth_seq_id: Column.ofStringArray(authSeqIds),
         Cartn_x: Column.ofFloatArray(Column.mapToArray(atoms.x, x => x * 10, Float32Array)),
         Cartn_y: Column.ofFloatArray(Column.mapToArray(atoms.y, y => y * 10, Float32Array)),
         Cartn_z: Column.ofFloatArray(Column.mapToArray(atoms.z, z => z * 10, Float32Array)),

@@ -324,7 +324,7 @@ function membraneSegments(ctx: ANVILContext, membrane: MembraneCandidate): Array
     const { units } = structure;
     const { elementIndices, unitIndices } = structure.serialMapping;
     const testPoint = v3zero();
-    const { auth_seq_id } = StructureProperties.residue;
+    const { label_seq_id } = StructureProperties.residue;
 
     const d1 = -v3dot(normalVector!, planePoint1);
     const d2 = -v3dot(normalVector!, planePoint2);
@@ -334,10 +334,10 @@ function membraneSegments(ctx: ANVILContext, membrane: MembraneCandidate): Array
     const inMembrane: { [k: string]: Set<number> } = Object.create(null);
     const outMembrane: { [k: string]: Set<number> } = Object.create(null);
     const segments: Array<{ start: number, end: number }> = [];
-    let authAsymId;
-    let lastAuthAsymId = null;
-    let authSeqId;
-    let lastAuthSeqId = units[0].model.atomicHierarchy.residues.auth_seq_id.value((units[0] as Unit.Atomic).chainIndex[0]) - 1;
+    let labelAsymId;
+    let lastLabelAsymId = null;
+    let labelSeqId;
+    let lastLabelSeqId = units[0].model.atomicHierarchy.residues.label_seq_id.value((units[0] as Unit.Atomic).chainIndex[0]) - 1;
     let startOffset = 0;
     let endOffset = 0;
 
@@ -347,19 +347,19 @@ function membraneSegments(ctx: ANVILContext, membrane: MembraneCandidate): Array
         if (!Unit.isAtomic(unit)) throw 'Property only available for atomic models.';
         const elementIndex = elementIndices[offsets[k]];
 
-        authAsymId = unit.model.atomicHierarchy.chains.auth_asym_id.value(unit.chainIndex[elementIndex]);
-        if (authAsymId !== lastAuthAsymId) {
-            if (!inMembrane[authAsymId]) inMembrane[authAsymId] = new Set<number>();
-            if (!outMembrane[authAsymId]) outMembrane[authAsymId] = new Set<number>();
-            lastAuthAsymId = authAsymId;
+        labelAsymId = unit.model.atomicHierarchy.chains.label_asym_id.value(unit.chainIndex[elementIndex]);
+        if (labelAsymId !== lastLabelAsymId) {
+            if (!inMembrane[labelAsymId]) inMembrane[labelAsymId] = new Set<number>();
+            if (!outMembrane[labelAsymId]) outMembrane[labelAsymId] = new Set<number>();
+            lastLabelAsymId = labelAsymId;
         }
 
-        authSeqId = unit.model.atomicHierarchy.residues.auth_seq_id.value(unit.residueIndex[elementIndex]);
+        labelSeqId = unit.model.atomicHierarchy.residues.label_seq_id.value(unit.residueIndex[elementIndex]);
         v3set(testPoint, unit.conformation.x(elementIndex), unit.conformation.y(elementIndex), unit.conformation.z(elementIndex));
         if (_isInMembranePlane(testPoint, normalVector!, dMin, dMax)) {
-            inMembrane[authAsymId].add(authSeqId);
+            inMembrane[labelAsymId].add(labelSeqId);
         } else {
-            outMembrane[authAsymId].add(authSeqId);
+            outMembrane[labelAsymId].add(labelSeqId);
         }
     }
 
@@ -368,27 +368,27 @@ function membraneSegments(ctx: ANVILContext, membrane: MembraneCandidate): Array
         if (!Unit.isAtomic(unit)) throw 'Property only available for atomic models.';
         const elementIndex = elementIndices[offsets[k]];
 
-        authAsymId = unit.model.atomicHierarchy.chains.auth_asym_id.value(unit.chainIndex[elementIndex]);
-        authSeqId = unit.model.atomicHierarchy.residues.auth_seq_id.value(unit.residueIndex[elementIndex]);
-        if (inMembrane[authAsymId].has(authSeqId)) {
+        labelAsymId = unit.model.atomicHierarchy.chains.label_asym_id.value(unit.chainIndex[elementIndex]);
+        labelSeqId = unit.model.atomicHierarchy.residues.label_seq_id.value(unit.residueIndex[elementIndex]);
+        if (inMembrane[labelAsymId].has(labelSeqId)) {
             // chain change
-            if (authAsymId !== lastAuthAsymId) {
+            if (labelAsymId !== lastLabelAsymId) {
                 segments.push({ start: startOffset, end: endOffset });
-                lastAuthAsymId = authAsymId;
+                lastLabelAsymId = labelAsymId;
                 startOffset = k;
                 endOffset = k;
             }
 
             // sequence gaps
-            if (authSeqId !== lastAuthSeqId + 1) {
-                if (outMembrane[authAsymId].has(lastAuthSeqId + 1)) {
+            if (labelSeqId !== lastLabelSeqId + 1) {
+                if (outMembrane[labelAsymId].has(lastLabelSeqId + 1)) {
                     segments.push({ start: startOffset, end: endOffset });
                     startOffset = k;
                 }
-                lastAuthSeqId = authSeqId;
+                lastLabelSeqId = labelSeqId;
                 endOffset = k;
             } else  {
-                lastAuthSeqId++;
+                lastLabelSeqId++;
                 endOffset++;
             }
         }
@@ -396,8 +396,8 @@ function membraneSegments(ctx: ANVILContext, membrane: MembraneCandidate): Array
     segments.push({ start: startOffset, end: endOffset });
 
     const l = StructureElement.Location.create(structure);
-    let startAuth;
-    let endAuth;
+    let startLabel;
+    let endLabel;
     const refinedSegments: Array<{ start: number, end: number }> = [];
     for (let k = 0, kl = segments.length; k < kl; k++) {
         const { start, end } = segments[k];
@@ -415,10 +415,10 @@ function membraneSegments(ctx: ANVILContext, membrane: MembraneCandidate): Array
         if (Math.min(d3, d4) < dMin && Math.max(d3, d4) > dMax) {
             // reject this refinement
             setLocation(l, structure, offsets[start]);
-            startAuth = auth_seq_id(l);
+            startLabel = label_seq_id(l);
             setLocation(l, structure, offsets[end]);
-            endAuth = auth_seq_id(l);
-            if (Math.abs(startAuth - endAuth) + 1 < adjust) {
+            endLabel = label_seq_id(l);
+            if (Math.abs(startLabel - endLabel) + 1 < adjust) {
                 return [];
             }
             refinedSegments.push(segments[k]);

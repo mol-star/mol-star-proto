@@ -24,12 +24,13 @@ async function getModels(mol: MolFile, ctx: RuntimeContext) {
     const A = Column.ofConst('A', mol.atoms.count, Column.Schema.str);
     const type_symbol = Column.asArrayColumn(atoms.type_symbol);
     const seq_id = Column.ofConst(1, atoms.count, Column.Schema.int);
+    const auth_seq_id = Column.ofConst('1', atoms.count, Column.Schema.str);
 
     const atom_site = Table.ofPartialColumns(BasicSchema.atom_site, {
         auth_asym_id: A,
         auth_atom_id: type_symbol,
         auth_comp_id: MOL,
-        auth_seq_id: seq_id,
+        auth_seq_id: auth_seq_id,
         Cartn_x: Column.asArrayColumn(atoms.x, Float32Array),
         Cartn_y: Column.asArrayColumn(atoms.y, Float32Array),
         Cartn_z: Column.asArrayColumn(atoms.z, Float32Array),

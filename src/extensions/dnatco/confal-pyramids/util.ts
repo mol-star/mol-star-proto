@@ -36,7 +36,7 @@ export namespace ConfalPyramidsUtil {
         asym_id: string,
         auth_asym_id: string,
         seq_id: number,
-        auth_seq_id: number,
+        auth_seq_id: string,
         comp_id: string,
         alt_id: string,
         ins_code: string,

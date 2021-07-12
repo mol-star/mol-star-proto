@@ -56,7 +56,7 @@ namespace ModelCrossLinkRestraint {
 
             if (table.model_granularity.value(row) === 'by-atom') {
                 const atomicElement = model.atomicHierarchy.index.findAtom({
-                    auth_seq_id: seqId,
+                    auth_seq_id: seqId.toString(),
                     label_asym_id: asymId,
                     label_atom_id: ps.atom_id.value(row),
                     label_entity_id: entityId,

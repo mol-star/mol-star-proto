@@ -422,8 +422,8 @@ function parseValidationReportXml(xml: XMLDocument, model: Model): ValidationRep
                 const value = parseFloat(getItem(attributes, 'value'));
                 const auth_asym_id = getItem(attributes, 'chain');
                 const auth_comp_id = getItem(attributes, 'rescode');
-                const auth_seq_id = parseInt(getItem(attributes, 'resnum'));
-                const rI = index.findResidueAuth({ auth_asym_id, auth_comp_id, auth_seq_id });
+                const auth_seq_id = getItem(attributes, 'resnum');
+                const rI = index.findResidueAuth({ auth_asym_id, auth_comp_id, auth_seq_id }); // TODO: REVIEW!
                 if (rI !== -1) rci.set(rI, value);
             }
         }
@@ -439,7 +439,7 @@ function parseValidationReportXml(xml: XMLDocument, model: Model): ValidationRep
 
         const auth_asym_id = getItem(ga, 'chain');
         const auth_comp_id = getItem(ga, 'resname');
-        const auth_seq_id = parseInt(getItem(ga, 'resnum'));
+        const auth_seq_id = getItem(ga, 'resnum'); // TODO: REVIEW!
         const pdbx_PDB_ins_code = getItem(ga, 'icode').trim() || undefined;
         const label_alt_id = getItem(ga, 'altcode').trim() || undefined;
 

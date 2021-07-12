@@ -69,7 +69,7 @@ export const mmCIF_Schema = {
          * scheme used here must match the scheme used in the publication
          * that describes the structure.
          */
-        auth_seq_id: int,
+        auth_seq_id: str,
         /**
          * Isotropic atomic displacement parameter, or equivalent isotropic
          * atomic displacement parameter, B~eq~, calculated from the
@@ -1192,7 +1192,7 @@ export const mmCIF_Schema = {
          * This data item is a pointer to _atom_site.auth_seq_id in the
          * ATOM_SITE category.
          */
-        ptnr1_auth_seq_id: int,
+        ptnr1_auth_seq_id: str,
         /**
          * Describes the symmetry operation that should be applied to the
          * atom set specified by _struct_conn.ptnr1_label* to generate the
@@ -1254,7 +1254,7 @@ export const mmCIF_Schema = {
          * This data item is a pointer to _atom_site.auth_seq_id in the
          * ATOM_SITE category.
          */
-        ptnr2_auth_seq_id: int,
+        ptnr2_auth_seq_id: str,
         /**
          * Describes the symmetry operation that should be applied to the
          * atom set specified by _struct_conn.ptnr2_label* to generate the

@@ -20,6 +20,10 @@ function getResidueId(seq_id: number, ins_code: string) {
     return `${seq_id} ${ins_code}`;
 }
 
+function getResidueIdAuth(auth_id: string, ins_code: string) {
+    return `${auth_id}*${ins_code}`; // Use asterisk to distinguish between ids generated from numbers and strings
+}
+
 function updateMapMapIndex<K, I extends number>(map: Map<K, Map<string, I>>, key0: K, key1: string, index: I) {
     if (map.has(key0)) {
         const submap = map.get(key0)!;
@@ -50,8 +54,8 @@ interface Mapping {
     entity_index_label_asym_id: Map<EntityIndex, Map<string, ChainIndex>>,
     chain_index_label_seq_id: Map<ChainIndex, Map<string | number, ResidueIndex>>,
 
-    auth_asym_id_auth_seq_id: Map<string, Map<number, ChainIndex>>,
-    chain_index_auth_seq_id: Map<ChainIndex, Map<string | number, ResidueIndex>>,
+    auth_asym_id_auth_seq_id: Map<string, Map<string, ChainIndex>>,
+    chain_index_auth_seq_id: Map<ChainIndex, Map<string, ResidueIndex>>,
 
     label_asym_id: Map<string, EntityIndex>,
 }
@@ -101,9 +105,9 @@ class Index implements AtomicIndex {
         return rm.has(key.auth_seq_id) ? rm.get(key.auth_seq_id)! : -1 as ChainIndex;
     }
 
-    findResidue(label_entity_id: string, label_asym_id: string, auth_seq_id: number, pdbx_PDB_ins_code?: string): ResidueIndex
+    findResidue(label_entity_id: string, label_asym_id: string, auth_seq_id: string, pdbx_PDB_ins_code?: string): ResidueIndex
     findResidue(key: AtomicIndex.ResidueKey): ResidueIndex
-    findResidue(label_entity_id_or_key: string | AtomicIndex.ResidueKey, label_asym_id?: string, auth_seq_id?: number, pdbx_PDB_ins_code?: string): ResidueIndex {
+    findResidue(label_entity_id_or_key: string | AtomicIndex.ResidueKey, label_asym_id?: string, auth_seq_id?: string, pdbx_PDB_ins_code?: string): ResidueIndex {
         let key: AtomicIndex.ResidueKey;
         if (arguments.length === 1) {
             key = label_entity_id_or_key as AtomicIndex.ResidueKey;
@@ -117,7 +121,7 @@ class Index implements AtomicIndex {
         const cI = this.findChainLabel(key);
         if (cI < 0) return -1 as ResidueIndex;
         const rm = this.map.chain_index_auth_seq_id.get(cI)!;
-        const id = getResidueId(key.auth_seq_id, key.pdbx_PDB_ins_code || '');
+        const id = getResidueIdAuth(key.auth_seq_id, key.pdbx_PDB_ins_code || '');
         return rm.has(id) ? rm.get(id)! : -1 as ResidueIndex;
     }
 
@@ -125,7 +129,7 @@ class Index implements AtomicIndex {
         const cI = this.findChainAuth(key);
         if (cI < 0) return -1 as ResidueIndex;
         const rm = this.map.chain_index_auth_seq_id.get(cI)!;
-        const id = getResidueId(key.auth_seq_id, key.pdbx_PDB_ins_code || '');
+        const id = getResidueIdAuth(key.auth_seq_id, key.pdbx_PDB_ins_code || '');
         return rm.has(id) ? rm.get(id)! : -1 as ResidueIndex;
     }
 
@@ -220,7 +224,7 @@ export function getAtomicIndex(data: AtomicData, entities: Entities, segments: A
         const authAsymId = auth_asym_id.value(chainIndex);
         let auth_asym_id_auth_seq_id = map.auth_asym_id_auth_seq_id.get(authAsymId);
         if (!auth_asym_id_auth_seq_id) {
-            auth_asym_id_auth_seq_id = new Map<number, ChainIndex>();
+            auth_asym_id_auth_seq_id = new Map<string, ChainIndex>();
             map.auth_asym_id_auth_seq_id.set(authAsymId, auth_asym_id_auth_seq_id);
         }
 
@@ -229,7 +233,7 @@ export function getAtomicIndex(data: AtomicData, entities: Entities, segments: A
         updateMapMapIndex(map.entity_index_label_asym_id, entityIndex, labelAsymId, chainIndex);
 
         const chain_index_label_seq_id = new Map<string | number, ResidueIndex>();
-        const chain_index_auth_seq_id = new Map<string | number, ResidueIndex>();
+        const chain_index_auth_seq_id = new Map<string, ResidueIndex>();
         map.chain_index_label_seq_id.set(chainIndex, chain_index_label_seq_id);
         map.chain_index_auth_seq_id.set(chainIndex, chain_index_auth_seq_id);
 
@@ -240,7 +244,7 @@ export function getAtomicIndex(data: AtomicData, entities: Entities, segments: A
             const authSeqId = auth_seq_id.value(rI);
             const insCode = pdbx_PDB_ins_code.value(rI);
             chain_index_label_seq_id.set(getResidueId(label_seq_id.value(rI), insCode), rI);
-            chain_index_auth_seq_id.set(getResidueId(authSeqId, insCode), rI);
+            chain_index_auth_seq_id.set(getResidueIdAuth(authSeqId, insCode), rI);
             auth_asym_id_auth_seq_id.set(authSeqId, chainIndex);
         }
     }

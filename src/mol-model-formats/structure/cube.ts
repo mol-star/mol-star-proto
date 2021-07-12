@@ -22,12 +22,13 @@ async function getModels(cube: CubeFile, ctx: RuntimeContext) {
     const A = Column.ofConst('A', cube.atoms.count, Column.Schema.str);
     const type_symbol = Column.ofArray({ array: Column.mapToArray(atoms.number, n => getElementFromAtomicNumber(n)), schema: Column.Schema.Aliased<ElementSymbol>(Column.Schema.str) });
     const seq_id = Column.ofConst(1, atoms.count, Column.Schema.int);
+    const auth_seq_id = Column.ofConst('1', atoms.count, Column.Schema.str);
 
     const atom_site = Table.ofPartialColumns(BasicSchema.atom_site, {
         auth_asym_id: A,
         auth_atom_id: type_symbol,
         auth_comp_id: MOL,
-        auth_seq_id: seq_id,
+        auth_seq_id: auth_seq_id,
         Cartn_x: Column.asArrayColumn(atoms.x, Float32Array),
         Cartn_y: Column.asArrayColumn(atoms.y, Float32Array),
         Cartn_z: Column.asArrayColumn(atoms.z, Float32Array),

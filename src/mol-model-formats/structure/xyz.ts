@@ -52,7 +52,7 @@ function getModels(mol: XyzFile, ctx: RuntimeContext) {
         auth_asym_id: A,
         auth_atom_id: type_symbol,
         auth_comp_id: MOL,
-        auth_seq_id: seq_id,
+        auth_seq_id: Column.ofStringArray(Column.mapToArray(seq_id, id => id.toString())),
         Cartn_x: Column.ofFloatArray(x),
         Cartn_y: Column.ofFloatArray(y),
         Cartn_z: Column.ofFloatArray(z),

@@ -164,7 +164,7 @@ export interface AtomicIndex {
      * @returns index or -1 if not present.
      */
     findResidue(key: AtomicIndex.ResidueKey): ResidueIndex,
-    findResidue(label_entity_id: string, label_asym_id: string, auth_seq_id: number, pdbx_PDB_ins_code?: string): ResidueIndex,
+    findResidue(label_entity_id: string, label_asym_id: string, auth_seq_id: string, pdbx_PDB_ins_code?: string): ResidueIndex,
 
     /**
      * Index of the 1st occurence of this residue.
@@ -211,12 +211,12 @@ export interface AtomicIndex {
 
 export namespace AtomicIndex {
     export interface ChainLabelKey { label_entity_id: string, label_asym_id: string }
-    export interface ChainAuthKey { auth_asym_id: string, auth_seq_id: number }
+    export interface ChainAuthKey { auth_asym_id: string, auth_seq_id: string }
 
-    export interface ResidueKey { label_entity_id: string, label_asym_id: string, auth_seq_id: number, pdbx_PDB_ins_code?: string }
-    export function EmptyResidueKey(): ResidueKey { return { label_entity_id: '', label_asym_id: '', auth_seq_id: 0, pdbx_PDB_ins_code: void 0 }; }
+    export interface ResidueKey { label_entity_id: string, label_asym_id: string, auth_seq_id: string, pdbx_PDB_ins_code?: string }
+    export function EmptyResidueKey(): ResidueKey { return { label_entity_id: '', label_asym_id: '', auth_seq_id: '', pdbx_PDB_ins_code: void 0 }; }
 
-    export interface ResidueAuthKey { auth_asym_id: string, auth_comp_id: string, auth_seq_id: number, pdbx_PDB_ins_code?: string }
+    export interface ResidueAuthKey { auth_asym_id: string, auth_comp_id: string, auth_seq_id: string, pdbx_PDB_ins_code?: string }
     export interface ResidueLabelKey { label_entity_id: string, label_asym_id: string, label_seq_id: number, pdbx_PDB_ins_code?: string }
 
     export interface AtomKey extends ResidueKey { label_atom_id: string, label_alt_id?: string }

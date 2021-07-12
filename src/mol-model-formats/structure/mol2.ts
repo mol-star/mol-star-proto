@@ -36,7 +36,7 @@ async function getModels(mol2: Mol2File, ctx: RuntimeContext) {
             auth_asym_id: A,
             auth_atom_id: Column.asArrayColumn(atoms.atom_name),
             auth_comp_id: atoms.subst_name,
-            auth_seq_id: atoms.subst_id,
+            auth_seq_id: Column.ofStringArray(Column.mapToArray(atoms.subst_id, id => id.toString())),
             Cartn_x: Column.asArrayColumn(atoms.x, Float32Array),
             Cartn_y: Column.asArrayColumn(atoms.y, Float32Array),
             Cartn_z: Column.asArrayColumn(atoms.z, Float32Array),
